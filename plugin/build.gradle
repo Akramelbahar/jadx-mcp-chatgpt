@@ -1,0 +1,42 @@
+// build.gradle  —  jadx-mcp-bridge
+// Author: Akram Elbahar | License: MIT
+//
+// Build:    ./gradlew shadowJar
+// Output:   build/libs/jadx-mcp-bridge-1.0.0-all.jar
+// Install:  copy that jar into ~/.jadx/plugins/  (or use JADX-GUI plugin installer)
+
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group   = 'ma.akram'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // jadx-core is on JADX's runtime classpath, so compileOnly keeps the jar small
+    compileOnly 'io.github.skylot:jadx-core:1.5.3'
+    // Gson is shipped with JADX too
+    compileOnly 'com.google.code.gson:gson:2.10.1'
+}
+
+shadowJar {
+    archiveClassifier.set('')          // produce jadx-mcp-bridge-1.0.0.jar (no -all)
+    minimize()                          // strip unused deps
+    manifest {
+        attributes 'Plugin-Id': 'ma-akram-jadx-mcp-bridge',
+                   'Plugin-Version': version,
+                   'Built-By': 'Akram Elbahar'
+    }
+}
+
+build.dependsOn shadowJar
